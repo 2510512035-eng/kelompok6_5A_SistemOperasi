@@ -60,11 +60,11 @@ Cara mengambil link commit: buka tab *Commits* di GitHub, klik commit yang dimak
 
 | ID | Perintah | Diharapkan | Aktual | Status |
 | :---- | :---- | :---- | :---- | :---- |
-| KU-5.1 | `./scripts/backup-lock.sh ../dataSumber ../dataBackup` | exit 1 | exit 1 | Lulus |
-| KU-5.2 | `./scripts/backup-lock.sh ../dataSumber ../dataBackup` | exit 2 | exit 2 | Lulus |
-| KU-5.3 | `./scripts/backup-lock.sh dataSumber dataBackup` | exit 3 | exit 3 | Lulus |
-| KU-5.4 | `docker run --rm -v /opt/backup-sistem/output:/report:ro debian:trixie-slim cat /report/laporan.txt` | exit 0 | exit 0 | Lulus |
-| KU-5.5 | `docker run --rm -v /opt/backup-sistem/output:/report:ro debian:trixie-slim sh -c 'echo "TEST" >> /report/laporan.txt'` | exit 0 | exit 0 | Lulus |
+| KU-5.1 | `./scripts/backup-lock.sh ../dataSumber ../dataBackup` | Lock diperoleh, backup sukses | [LOCK ACQUIRED] lalu [SUCCESS], Lulus | Lulus |
+| KU-5.2 | `./scripts/backup-lock.sh ../dataSumber ../dataBackup` | Proses kedua ditolak (exit 6) | [LOCKED] backup ditolak, Lulus | Lulus |
+| KU-5.3 | `./scripts/backup-lock.sh dataSumber dataBackup` | Validasi gagal (exit 2), tercatat di log | [LOCK ACQUIRED] lalu error exit code 2, Lulus | Lulus |
+| KU-5.4 | `docker run --rm -v /opt/backup-sistem/output:/report:ro debian:trixie-slim cat /report/laporan.txt` | Container bisa membaca laporan.txt | Isi laporan.txt tampilan di terminal, Lulus | Lulus |
+| KU-5.5 | `docker run --rm -v /opt/backup-sistem/output:/report:ro debian:trixie-slim sh -c 'echo "TEST" >> /report/laporan.txt'` | Penulisan ditolak & hash tetap | Ditolak (Read-only file system) & SHA-256 tetap, Lulus | Lulus |
 
 **Verifikasi.** Status keluaran diperiksa melalui $?, riwayat pencatatan diperiksa menggunakan tail -n 5 evidence/locking.log dan tail -n 5 evidence/backup.log, isi ringkasan diverifikasi dengan cat output/laporan.txt, serta keutuhan berkas laporan diperiksa dengan sha256sum.
 
